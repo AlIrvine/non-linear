@@ -113,3 +113,5 @@ ratiolist.append(dist_ratio)
 # In a different routine - determine a critical ratio value (say 10%) and count
 # how many 'false neighbours' (dist change >10%) there are moving up dimensions
 # graph the proportions of false near neighbours. 
+
+# arbitrary change!
