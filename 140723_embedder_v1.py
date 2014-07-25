@@ -11,6 +11,7 @@
 # Importing various things:
 import numpy as np
 import pandas as pd
+import math
 from numpy import *
 from pandas import *
 
@@ -85,33 +86,39 @@ print (dist2 - dist)/dist
 
 maxlen = min(len(embed3), len(embed4)) # The last index item in the n-dimension is not in the n+1-dimension
 print maxlen # check length
-distlist = [] # target list for distances between points
-ratiolist = []
-# I want to wrap what's below this to go through each point
-m=0 
-while m<=maxlen:
-    dist = np.linalg.norm(embed3[134] - embed3[m]) # Index 134 used as example
-    distlist.append(dist)
-    m+=1
 
-print distlist  # prints a list of all the distances between index 134 and itself
-y = distlist.index(min(x for x in distlist if x != 0))
-print y
-dist_min_n = np.linalg.norm(embed3[134]- embed3[y])
-dist_min_n1 = np.linalg.norm(embed4[134] - embed4[y])
-dist_ratio = (dist_min_n1 - dist_min_n) / dist_min_n
-print dist_ratio
-ratiolist.append(dist_ratio)
+# make the dist-ratio list for all points in an embedding
+i = 0
+ratiolist = []
+while i <maxlen:
+    distlist = [] # target list for distances between points
  
+    m=0
+    while m<=maxlen:
+        dist = np.linalg.norm(embed3[i] - embed3[m]) # Index 134 used as example
+        distlist.append(dist)
+        m+=1
+
+    y = distlist.index(min(x for x in distlist if x != 0))
+    
+    dist_min_n = np.linalg.norm(embed3[i]- embed3[y]) # Euclidean norm distance
+    dist_min_n1 = np.linalg.norm(embed4[i] - embed4[y]) # Euclidean norm distance
+    dist_min_n_sq = (dist_min_n)**2 # For use in ratio difference
+    dist_min_n1_sq = (dist_min_n1)**2 # For use in ratio difference
+    dist_ratio = math.sqrt((dist_min_n1_sq - dist_min_n_sq) / dist_min_n_sq)
+    ratiolist.append(dist_ratio)
+    i +=1
+print ratiolist
+
+# Near neighbour measures:
+# Ratio difference: count numbers of nearest differences that exceed some tolerance
+# (method 1 of Kennel et al.)
+# A_tol method (see kennel et al. pg 94 in copin w/ chaos)
+
+
 # Where to go from here:
- # find the second smallest value's index. (what I'm stuck on!)
- # pull in the n+1 dimensional array
- # abusing the index being the same for each point in the embedding, only compare
- # the distance between the point we're on and it's nearest neighbour (the index found above)
- # using the ratio on line 70. Store this.
 
 # In a different routine - determine a critical ratio value (say 10%) and count
 # how many 'false neighbours' (dist change >10%) there are moving up dimensions
 # graph the proportions of false near neighbours. 
 
-# arbitrary change!
