@@ -11,7 +11,9 @@
 # Importing various things:
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import math
+from __future__ import division
 from numpy import *
 from pandas import *
 
@@ -49,13 +51,27 @@ def time_delay_embed(array, dimension, time_dif):
         i -=1  
     return embed
 # Create a set of dimensions to check through
+embed1 = np.asarray(time_delay_embed(base_data, 1,0))
 embed2 = np.asarray(time_delay_embed(base_data, 2,0))
 embed3 = np.asarray(time_delay_embed(base_data, 3,0))
 embed4 = np.asarray(time_delay_embed(base_data, 4,0))
 embed5 = np.asarray(time_delay_embed(base_data, 5,0))
 embed6 = np.asarray(time_delay_embed(base_data, 6,0))
+embed7 = np.asarray(time_delay_embed(base_data, 7,0))
+embed8 = np.asarray(time_delay_embed(base_data, 8,0))
+embed9 = np.asarray(time_delay_embed(base_data, 9,0))
+embed10 = np.asarray(time_delay_embed(base_data, 10,0))
+embed11 = np.asarray(time_delay_embed(base_data, 11,0))
 
-print embed3[:3]
+print len(embed1) #embed 1 having index issues 
+print len(embed6)
+print len(embed7) #embed 7 seems to cause issues (as lower and higher)
+print len(embed8)
+print len(embed9) #embed 9 has index issue as lower dimension
+print len(embed10)
+print len(embed11)
+
+print embed7[:3]
 print embed3
 print embed4[:3]
 print embed6[:3]
@@ -63,53 +79,92 @@ print embed3[1]
 
 print embed3.shape
 print embed4.shape
+            
 
-dist = np.linalg.norm(embed3[1] - embed3[2])
-dist2 = np.linalg.norm(embed4[1] - embed4[2])
+# make the distance-ratio list for all points in an embedding:
 
-print dist, dist2
-print (dist2 - dist)/dist
-
-"""def near_neighbour_checker(array1, array2):
-    An approach to checking the distance to every other point,
-    and how far they move as dimension increases
-    array1: an array in dimension n
-    array2: an array in dimension n+1)
-    maxlen = min(len(array1), len(array2))
-    distlist = []
-    for i in [0,maxlen]:
-        m=1
-        dist = np.linalg.norm(array1[i] - array1[i+m]
-        distlist.append"""
-        
-# Everything below this is where I'm stuck:
-
-maxlen = min(len(embed3), len(embed4)) # The last index item in the n-dimension is not in the n+1-dimension
-print maxlen # check length
-
-# make the dist-ratio list for all points in an embedding
-i = 0
-ratiolist = []
-while i <maxlen:
-    distlist = [] # target list for distances between points
- 
-    m=0
-    while m<=maxlen:
-        dist = np.linalg.norm(embed3[i] - embed3[m]) # Index 134 used as example
-        distlist.append(dist)
-        m+=1
-
-    y = distlist.index(min(x for x in distlist if x != 0))
+def near_neighbour_checker(array1,array2):
+    """ An approach to checking the distance between neighbours as dimension
+    increases, as in Kennel et al 1992.
+    array1: An array of dimension n
+    array2: An array of dimension n+1"""
+    maxlen = min(len(array1), len(array2)) # The last point in dimension n
+                                        # Is not in dimension n+1
+    i = 0
+    ratiolist = []
+    while i <maxlen:
+        distlist = [] # target list for distances between points
     
-    dist_min_n = np.linalg.norm(embed3[i]- embed3[y]) # Euclidean norm distance
-    dist_min_n1 = np.linalg.norm(embed4[i] - embed4[y]) # Euclidean norm distance
-    dist_min_n_sq = (dist_min_n)**2 # For use in ratio difference
-    dist_min_n1_sq = (dist_min_n1)**2 # For use in ratio difference
-    dist_ratio = math.sqrt((dist_min_n1_sq - dist_min_n_sq) / dist_min_n_sq)
-    ratiolist.append(dist_ratio)
-    i +=1
-print ratiolist
+        m=0
+        while m<=maxlen:
+            dist = np.linalg.norm(array1[i] - array1[m]) # Index 134 used as example
+            distlist.append(dist)
+            m+=1
+    
+        y = distlist.index(min(x for x in distlist if x != 0))
+        
+        dist_min_n = np.linalg.norm(array1[i]- array1[y]) # Euclidean norm distance
+        dist_min_n1 = np.linalg.norm(array2[i] - array2[y]) # Euclidean norm distance
+        dist_min_n_sq = (dist_min_n)**2 # For use in ratio difference
+        dist_min_n1_sq = (dist_min_n1)**2 # For use in ratio difference
+        dist_ratio = math.sqrt((dist_min_n1_sq - dist_min_n_sq) / dist_min_n_sq)
+        ratiolist.append(dist_ratio)
+        i +=1
+    return ratiolist
 
+# Checking which dimension comparisons are having index issues
+near_neighbour_checker(embed2,embed3)
+near_neighbour_checker(embed5,embed6)
+near_neighbour_checker(embed6,embed7)
+near_neighbour_checker(embed7,embed8)
+near_neighbour_checker(embed8,embed9)
+near_neighbour_checker(embed9,embed10)
+near_neighbour_checker(embed10,embed11)
+
+# Count the number of near neighbours whose ratio is over some critical size!
+# need to generate the list, use a defined tolerance to compare, get the proportion
+
+def near_neighbour_graph1(tolerance):
+    method1_list = []
+    #tol_count1 = sum(1 for x in near_neighbour_checker(embed1,embed2) if  x >tolerance)
+    tol_count2 = sum(1 for x in near_neighbour_checker(embed2,embed3) if  x >tolerance)
+    tol_count3 = sum(1 for x in near_neighbour_checker(embed3,embed4) if  x >tolerance)
+    tol_count4 = sum(1 for x in near_neighbour_checker(embed4,embed5) if  x >tolerance)
+    tol_count5 = sum(1 for x in near_neighbour_checker(embed5,embed6) if  x >tolerance)
+    #tol_count6 = sum(1 for x in near_neighbour_checker(embed6,embed7) if  x >tolerance)
+    #tol_count7 = sum(1 for x in near_neighbour_checker(embed7,embed8) if  x >tolerance)
+    tol_count8 = sum(1 for x in near_neighbour_checker(embed8,embed9) if  x >tolerance)
+    #tol_count9 = sum(1 for x in near_neighbour_checker(embed9,embed10) if  x >tolerance)
+    tol_count10 = sum(1 for x in near_neighbour_checker(embed10,embed11) if  x >tolerance)
+    
+   # embed_tot1 = len(near_neighbour_checker(embed1,embed2))
+    embed_tot2 = len(near_neighbour_checker(embed2,embed3))
+    embed_tot3 = len(near_neighbour_checker(embed3,embed4))
+    embed_tot4 = len(near_neighbour_checker(embed4,embed5))
+    embed_tot5 = len(near_neighbour_checker(embed5,embed6))
+    #embed_tot6 = len(near_neighbour_checker(embed6,embed7))
+    #embed_tot7 = len(near_neighbour_checker(embed7,embed8))
+    embed_tot8 = len(near_neighbour_checker(embed8,embed9))
+    #embed_tot9 = len(near_neighbour_checker(embed9,embed10))
+    embed_tot10 = len(near_neighbour_checker(embed10,embed11))
+    
+    #false_near_prop1 = tol_count1 / embed_tot1
+    false_near_prop2 = tol_count2 / embed_tot2
+    false_near_prop3 = tol_count3 / embed_tot3
+    false_near_prop4 = tol_count4 / embed_tot4
+    false_near_prop5 = tol_count5 / embed_tot5
+    #false_near_prop6 = tol_count6 / embed_tot6
+    #false_near_prop7 = tol_count7 / embed_tot7
+    false_near_prop8 = tol_count8 / embed_tot8
+    #false_near_prop9 = tol_count9 / embed_tot9
+    false_near_prop10 = tol_count10 / embed_tot10
+    
+    method1_list.extend([false_near_prop2,false_near_prop3,
+                        false_near_prop4,false_near_prop5,
+                        false_near_prop8,false_near_prop10])
+    print method1_list
+
+near_neighbour_graph1(2)
 # Near neighbour measures:
 # Ratio difference: count numbers of nearest differences that exceed some tolerance
 # (method 1 of Kennel et al.)
