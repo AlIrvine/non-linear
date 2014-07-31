@@ -42,27 +42,29 @@ def time_delay_embed(array, dimension, time_dif):
     embed = [] # target for full set
     while i >= dimension-1:
         a = 0  # the dimensional counter
+        b = 0  # time_dif counter
         while a< dimension:
-            new_vec.append(emb[i-a])
+            new_vec.append(emb[i-b])
             a+=1
+            b+= time_dif
         embed.append(new_vec)
         new_vec = []
         i -=1  
     return embed
 # Create a set of dimensions to check through
-embed1 = np.asarray(time_delay_embed(base_data, 1,0))
-embed2 = np.asarray(time_delay_embed(base_data, 2,0))
-embed3 = np.asarray(time_delay_embed(base_data, 3,0))
-embed4 = np.asarray(time_delay_embed(base_data, 4,0))
-embed5 = np.asarray(time_delay_embed(base_data, 5,0))
-embed6 = np.asarray(time_delay_embed(base_data, 6,0))
-embed7 = np.asarray(time_delay_embed(base_data, 7,0))
-embed8 = np.asarray(time_delay_embed(base_data, 8,0))
-embed9 = np.asarray(time_delay_embed(base_data, 9,0))
-embed10 = np.asarray(time_delay_embed(base_data, 10,0))
-embed11 = np.asarray(time_delay_embed(base_data, 11,0))
+embed1 = np.asarray(time_delay_embed(base_data, 1,1))
+embed2 = np.asarray(time_delay_embed(base_data, 2,1))
+embed3 = np.asarray(time_delay_embed(base_data, 3,1))
+embed4 = np.asarray(time_delay_embed(base_data, 4,1))
+embed5 = np.asarray(time_delay_embed(base_data, 5,1))
+embed6 = np.asarray(time_delay_embed(base_data, 6,1))
+embed7 = np.asarray(time_delay_embed(base_data, 7,1))
+embed8 = np.asarray(time_delay_embed(base_data, 8,1))
+embed9 = np.asarray(time_delay_embed(base_data, 9,1))
+embed10 = np.asarray(time_delay_embed(base_data, 10,1))
+embed11 = np.asarray(time_delay_embed(base_data, 11,1))
 
-print len(embed1) #embed 1 having index issues 
+"""print len(embed1) #embed 1 having index issues 
 print len(embed6)
 print len(embed7) #embed 7 seems to cause issues (as lower and higher)
 print len(embed8)
@@ -78,7 +80,12 @@ print embed3[1]
 
 print embed3.shape
 print embed4.shape
-            
+
+embed3_1 = np.asarray(time_delay_embed(base_data, 3,1))
+embed3_2 = np.asarray(time_delay_embed(base_data, 3,2)) 
+
+print embed3_1[:5]
+print embed3_2[:5]"""
 
 # make the distance-ratio list for all points in an embedding:
 
@@ -111,7 +118,7 @@ def near_neighbour_checker(array1,array2):
         i +=1
     return ratiolist
 
-# Checking which dimension comparisons are having index issues
+"""# Checking which dimension comparisons are having index issues
 near_neighbour_checker(embed1,embed2)
 near_neighbour_checker(embed2,embed3)
 near_neighbour_checker(embed3,embed4)
@@ -121,7 +128,7 @@ near_neighbour_checker(embed6,embed7)
 near_neighbour_checker(embed7,embed8)
 near_neighbour_checker(embed8,embed9)
 near_neighbour_checker(embed9,embed10)
-near_neighbour_checker(embed10,embed11)
+near_neighbour_checker(embed10,embed11)"""
 
 # Count the number of near neighbours whose ratio is over some critical size!
 # need to generate the list, use a defined tolerance to compare, get the proportion
@@ -181,25 +188,29 @@ def near_neighbour_method1(tolerance):
     return method1_list
 
 near_neighbour_method1(2)
+near_neighbour_method1(10)
 
-def near_neighbour_graph(tolerance):
+def near_neighbour_graph(tolerance1,tolerance2):
     """Plots the proportion of False Near Neighbours (FFNs) in a given series
     as dimension increases.
     Tolerance: Passed to 'near_neighbour_method1' to generate the data"""
     plt.clf()
     xticks = np.arange(1,11,1)
     yticks = np.arange(-0.1,0.8,0.1)
-    plt.plot(xticks,near_neighbour_method1(tolerance))
+    plt.plot(xticks,near_neighbour_method1(tolerance1), label = 'Tolerance = 4')
+    plt.plot(xticks,near_neighbour_method1(tolerance2), label = 'Tolerance = 10')
+    plt.axhline(y=0.05, xmin=0, xmax=10,color='r',label = '5%')
+    plt.legend()
+    plt.title('False Near Neighbours')
     plt.xlabel('Dimension')
     plt.ylabel('Proportion of False Near Neighbours')
     plt.axis([1,10,-0.1,0.8])
     xticks = np.arange(1,10,1)
     yticks = np.arange(-0.1,0.8,0.1)
     plt.yticks(yticks)
-    plt.axhline(y=0.05, xmin=0, xmax=10,color='r')
     plt.show()
     
-near_neighbour_graph(10)
+near_neighbour_graph(4,10)
     
 # Near neighbour measures:
 # Ratio difference: count numbers of nearest differences that exceed some tolerance
