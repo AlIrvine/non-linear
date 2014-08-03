@@ -17,9 +17,9 @@ from numpy import *
 from pandas import *
 
 # 1. Importing my series
-gdp_base = ('/Users/Al/Documents/work/Edinburgh/Msc/Dissertation/'+
-                            'local_work/140723GDP1.csv') #sets the path
-base_data = pd.read_csv(gdp_base) # imports the data
+hen_base = ('/Users/Al/Documents/work/Edinburgh/Msc/Dissertation/'+
+                            'local_work/Henon_new_stata.csv') #sets the path
+base_data = pd.read_csv(hen_base) # imports the data
 print base_data.ix[:4]     # Check how data has imported
 # date = base_data.pop('date') 
 # base_data.index = date # Set the index to the date variable
@@ -34,7 +34,7 @@ def time_delay_embed(array, dimension, time_dif):
         dimension: how many elements to the vector
         time_dif: for if we want to delay by more than one time period (not used for now)"""
     emb = array.values # Converts the panda dataframe to an array
-    emb = np.delete(emb, np.s_[0],1) # Given data structure, delete year column
+    emb = np.delete(emb, np.s_[0,2],1) # Given data structure, delete year and t-1 column
     emb = np.squeeze(np.asarray(emb)) # Make a 1-d array of all values
     i = data_len-1 # sets up a counter
     new_vec = [] # target for each row
@@ -62,6 +62,8 @@ embed8 = np.asarray(time_delay_embed(base_data, 8,1))
 embed9 = np.asarray(time_delay_embed(base_data, 9,1))
 embed10 = np.asarray(time_delay_embed(base_data, 10,1))
 embed11 = np.asarray(time_delay_embed(base_data, 11,1))
+
+print embed1[:4]
 
 """print len(embed1) #embed 1 having index issues 
 print len(embed6)
