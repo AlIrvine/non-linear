@@ -64,6 +64,7 @@ embed10 = np.asarray(time_delay_embed(base_data, 10,1))
 embed11 = np.asarray(time_delay_embed(base_data, 11,1))
 
 print embed1[:4]
+print embed2[:4]
 
 """print len(embed1) #embed 1 having index issues 
 print len(embed6)
