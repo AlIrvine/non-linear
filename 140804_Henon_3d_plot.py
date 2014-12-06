@@ -9,11 +9,11 @@
 # 5. Prediction? ? 
 
 # Importing various things:
+from __future__ import division
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
-from __future__ import division
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 from numpy import *
@@ -129,7 +129,5 @@ def threed_graph():
 oned_graph()
 twod_graph()
 threed_graph()
-
-
 
 
